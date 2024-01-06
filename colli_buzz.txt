@@ -1,0 +1,119 @@
+#include <LiquidCrystal.h>
+LiquidCrystal lcd(12,11,5,4,3,2) ;
+int  trigPin = 10 ;   //trig
+int  echoPin = 9 ;    //echo
+//int  red     = 7 ;   
+//int  green   = 8 ;
+long duration , cm, inches ;
+int piezopin = 8;
+
+void setup() {
+  Serial.begin (9600) ;
+  pinMode(trigPin, OUTPUT) ;
+  pinMode(echoPin, INPUT) ;
+  //initializing pins
+  //get up the lcd's number of columns and rows 
+
+
+  lcd.begin(16,2) ;
+  //initialize digital pin 08 and 07 as an output
+  pinMode(8, OUTPUT);
+  //pinMode(7, OUTPUT);
+ 
+}
+
+void loop() {
+  //the sensor is triggered by a High pulse of 10 or more microseconds
+  digitalWrite(trigPin, LOW) ;
+  delayMicroseconds(5) ;
+  digitalWrite(trigPin, HIGH) ;
+  delayMicroseconds(10) ;
+  digitalWrite(trigPin, LOW) ;
+  // Read signal from sensor
+  pinMode(echoPin, INPUT) ;
+  duration = pulseIn(echoPin, HIGH) ;
+  //convert the time into a distance
+  cm = (duration/2) /29.1 ;
+  delay(100);
+
+  if ( cm >= 30 ) 
+  {
+    lcd.print(cm) ;
+    lcd.print(" cm""-safe") ;
+    //digitalWrite(8, HIGH) ; //turn the LED on (High voltage level)
+    //delay(500);
+    digitalWrite(8, LOW) ;
+    noTone(piezopin) ;
+    lcd.print("       ") ;
+  
+  }
+  else if( cm <= 20 )
+  {
+    lcd.print(cm) ;
+    lcd.print(" cm""DANGER") ;
+    //digitalWrite(7, HIGH) ; //turn the LED on (High voltage level)
+    tone(piezopin, 1000);
+    
+    delay(500);
+    lcd.print("        ") ;  
+  }
+  lcd.setCursor(0,0) ;
+  digitalWrite(8, LOW) ;
+  //digitalWrite(7, LOW) ;
+
+}
+
+
+
+/************  connections ***********/
+
+~~~~  distance sensor (HR Sc -04)
+
+vcc  -- BB +ve
+trig -- arduino 10
+echo -- arduino 9
+grnd -- BB grnd
+
+~~~~ LCD 
+
+1 -- BB grnd
+2 -- BB +ve
+3 -- BB grnd
+4 -- arduino 12
+5 -- BB grnd
+6 -- arduino 11
+7,8,9,10 -- No connections
+11 -- arduino 5
+12 -- arduino 4
+13 -- arduino 3
+14 -- arduino 2
+15 -- BB +ve
+16 -- BB grnd
+
+~~~~ BB
+
+Both the +ve -Ve columns of BB are connected 
+set of 5 of columns are connected
+
+~~~~ Arduino
+
+5V -- BB +ve
+grnd -- BB grnd
+8 -- piezo +ve
+
+piezo -Ve -- BB grnd
+
+
+/***********/
+
+if there is a LEDinstead of buzzer LED +ve -- arduino 7 ;
+
+
+
+
+
+
+
+
+
+
